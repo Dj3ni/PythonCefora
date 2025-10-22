@@ -11,6 +11,4 @@ variable_object = {
 variableFonction = lambda x: x*2
 print(variableFonction(5))
 
-
-
 print(96.401 % 20)
