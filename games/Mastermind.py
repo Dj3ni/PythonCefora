@@ -12,6 +12,14 @@ correct_colors_placement = []
 
 # 1. Check si valide
 
+def count_color_in_code(color,code):
+    count = 0
+    for c in code:
+        if c == color:
+            count += 1
+    return count
+
+
 def check_if_valid(guess):
     """
     Checks if the guess is valid
@@ -36,7 +44,8 @@ def check_color(guess, code):
     for i in range(CODE_LENGTH):
         if code[i] != guess[i] and guess[i] in code:
             if guess[i] not in correct_colors:
-                correct_colors.append(guess[i])
+                for j in range(count_color_in_code(guess[i],code)):
+                    correct_colors.append(guess[i])
     return len(correct_colors)
 
 # 3. Check Couleur / Position

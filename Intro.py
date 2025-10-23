@@ -36,3 +36,23 @@ if __name__ == '__main__':
     pi = math.pi
     print(pi)
 
+############################################################################
+# Try
+############################################################################
+
+try:
+    pi = math.pi
+except ZeroDivisionError as zd:
+    print(zd)
+except Exception as ex:
+    print(ex)
+finally:
+    print("Done")
+
+# créer une erreur
+
+class MonErreur:
+    """
+        Mon Exception,
+    """
+    pass # permet de laisser le code vide
