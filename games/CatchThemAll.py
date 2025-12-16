@@ -7,118 +7,7 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 import random
-
 import time
-
-# combattre ennemi:
-    # tant que PV, à chaque tour affiche pv et nom des pokemons
-    # quand pokemon KO, passe au suivant
-    # quand tous pokemons Ko: vaincus
-
-# Methods
-def open_backpack():
-     for pokeball in backpack:
-         display_pokemon(pokeball)
-
-def display_pokemon(pokemon):
-    color = type_colors.get(pokemon["type"], Fore.WHITE)
-
-    # Display Poke info
-    print(f"{color}{Style.BRIGHT}┌{'─' * 20}┐")
-    print(f"{color}{Style.BRIGHT}│ Name: {pokemon['name']:<13}│")
-    print(f"{color}{Style.BRIGHT}│ Type: {pokemon['type']:<13}│")
-    print(f"{color}{Style.BRIGHT}│ HP: {pokemon['hp']:<15}│")
-    print(f"{color}{Style.BRIGHT}│ Attack: {pokemon['attack']:<11}│")
-    print(f"{color}{Style.BRIGHT}│ Defense: {pokemon['defense']:<10}│")
-    print(f"{color}{Style.BRIGHT}│ Speed: {pokemon['speed']:<12}│")
-    print(f"{color}{Style.BRIGHT}└{'─' * 20}┘{Style.RESET_ALL}")
-
-def open_pokedex():
-    for pokemon in pokemons_savage:
-        display_pokemon(pokemon)
-
-def pick_your_pokemon():
-    while True:
-        your_pokemon = input("Select your pokemon: ").strip()
-        for p in backpack:
-            if p["name"].lower() == your_pokemon:
-                return p
-        print("You don't have that pokemon.")
-
-def hunt_pokemon():
-    fighters = []
-    hunter = pick_your_pokemon()
-    prey = random.choice(pokemons_savage)
-    fighters.append([hunter, prey])
-
-    display_pokemon(hunter)
-    display_pokemon(prey)
-
-    if hunter["hp"] > 0:
-        if hunter["attack"] > prey["defense"]:
-            print("You caught it!")
-            if prey["name"] in backpack:
-                prey["name"]+= 1
-            backpack.append(prey)
-        else:
-            print(f"Oh no! {prey["name"]} fled. Try another time!")
-    else:
-        print(f"Oh no! {hunter["name"]} is KO. Try with another pokemon!")
-
-def heal_pokemons(pokemons):
-    for pokemon in pokemons:
-        pokemon["hp"] = pokemon["max_hp"]
-        print(f"Healing {pokemon['name']}")
-    print(f"All your pokemons are healed!")
-
-def fight_pokemons(p1, p2):
-    winner = ""
-    while winner == "":
-        # 1er tour
-        if p1["hp"] > 0:
-            attack = random.randint(0,p1["attack"]-1) - p2["defense"]
-            if attack < 0:
-                attack = 0
-            p2["hp"] -= attack
-            print(f"{p1["name"]} attacks with {attack} damage. {p2["name"]} has  {p2["hp"]} hp left")
-            if p2["hp"] <= 0:
-                winner = p1["name"]
-                print(f"{p2['name']} is KO!")
-        time.sleep(0.5)
-        if p2["hp"] > 0:
-            attack = random.randint(0, p2["attack"] - 1) - p1["defense"]
-            if attack < 0:
-                attack = 0
-            p1["hp"] -= attack
-            print(f"{p2["name"]} attacks with {attack} damage. {p1["name"]} has  {p1["hp"]} hp left")
-            if p1["hp"] <= 0:
-                winner = p2["name"]
-                print(f"{p1['name']} is KO!")
-        time.sleep(1)
-    return winner
-
-
-def battle(number_of_pokemons = 3):
-    my_team = []
-    adversary_team = []
-
-    for i in range(number_of_pokemons):
-        my_team.append(pick_your_pokemon())
-        heal_pokemons(adversary_team)
-        adversary_team.append(random.choice(enemy_backpack))
-
-    # Starting the fight ?
-    starter = random.randint(1, 2)
-    if starter == 1:
-        print("You start")
-        fight_pokemons(pick_your_pokemon(), adversary_team[0])
-    else:
-        print("Ennemy starts")
-        fight_pokemons(adversary_team[0], pick_your_pokemon())
-
-
-
-
 
 # Data
 pokemons_savage = [
@@ -213,7 +102,26 @@ backpack = [
         "defense": 30,
         "speed": 10,
         "type": "electric"
-    }
+    },
+{
+        "name": "Ponyta",
+        "hp": 50,
+        "max_hp": 50,
+        "attack": 85,
+        "defense": 55,
+        "speed": 90,
+        "type": "fire"
+    },
+{
+        "name": "Squirtle",
+        "hp": 44,
+        "max_hp": 50,
+        "attack": 48,
+        "defense": 65,
+        "speed": 43,
+        "type": "water"
+    },
+
 ]
 enemy_backpack = [
     {
@@ -317,6 +225,136 @@ type_colors = {
     "ghost": Fore.WHITE,
 }
 
+# Methods
+def open_backpack():
+    for pokeball in backpack:
+        display_pokemon(pokeball)
+
+def display_pokemon(pokemon):
+    color = type_colors.get(pokemon["type"], Fore.WHITE)
+
+    # Display Poke info
+    print(f"{color}{Style.BRIGHT}┌{'─' * 20}┐")
+    print(f"{color}{Style.BRIGHT}│ Name: {pokemon['name']:<13}│")
+    print(f"{color}{Style.BRIGHT}│ Type: {pokemon['type']:<13}│")
+    print(f"{color}{Style.BRIGHT}│ HP: {pokemon['hp']:<15}│")
+    print(f"{color}{Style.BRIGHT}│ Attack: {pokemon['attack']:<11}│")
+    print(f"{color}{Style.BRIGHT}│ Defense: {pokemon['defense']:<10}│")
+    print(f"{color}{Style.BRIGHT}│ Speed: {pokemon['speed']:<12}│")
+    print(f"{color}{Style.BRIGHT}└{'─' * 20}┘{Style.RESET_ALL}")
+
+def open_pokedex():
+    for pokemon in pokemons_savage:
+        display_pokemon(pokemon)
+
+def pick_your_pokemon(poke_list):
+    while True:
+        your_pokemon = input("Select your pokemon: ").strip()
+        for p in poke_list:
+            if p["name"].lower() == your_pokemon.lower():
+                if p["hp"] > 0:
+                    return p
+                print(f"{p['name']} is too tired, pick another one")
+        print("You don't have that pokemon.")
+
+def hunt_pokemon():
+    fighters = []
+    prey = random.choice(pokemons_savage)
+    print("You encountered : ")
+    display_pokemon(prey)
+    hunter = pick_your_pokemon(backpack)
+    fighters.append([hunter, prey])
+
+    display_pokemon(hunter)
+    display_pokemon(prey)
+
+    if hunter["hp"] > 0:
+        if hunter["attack"] > prey["defense"]:
+            print("You caught it!")
+            if prey["name"] in backpack:
+                prey["name"]+= 1
+            backpack.append(prey)
+        else:
+            print(f"Oh no! {prey['name']} fled. Try another time!")
+    else:
+        print(f"Oh no! {hunter['name']} is KO. Try with another pokemon!")
+
+def heal_pokemons(pokemons):
+    for pokemon in pokemons:
+        if pokemon["hp"] < pokemon["max_hp"]:
+            pokemon["hp"] = pokemon["max_hp"]
+            print(f"Healing {pokemon['name']}")
+    print(f"All pokemons are healed!")
+
+# Fight methods :
+    # tant que PV, à chaque tour affiche pv et nom des pokemons
+    # quand pokemon KO, passe au suivant
+    # quand tous pokemons Ko: vaincus
+
+def fight_pokemons(p1, p2):
+    while p1["hp"] > 0 and p2["hp"] > 0:
+        # If attacker put defender KO, return his name as winner
+        if deal_damage(p1, p2):
+            return p1["name"]
+        time.sleep(0.5)
+
+        # Otherwise defender's turn, if he puts attacker KO, his name is returned
+        if deal_damage(p2,p1):
+            return p2["name"]
+        time.sleep(0.5)
+
+def deal_damage(attacker, defender):
+    if attacker["hp"] > 0:
+        attack = random.randint(0,attacker["attack"]-1) - defender["defense"]
+        if attack < 0:
+            attack = 0
+        defender["hp"] -= attack
+        print(f"{attacker['name']} attacks with {attack} damage. {defender['name']} has  {defender['hp']} hp left")
+        if defender["hp"] <= 0:
+            print(f"{defender['name']} is KO!, {attacker['name']} won the fight!")
+            return True
+    return False
+
+def team_battle(my_team, adversary_team):
+    current_enemy = adversary_team[0]
+    while len(my_team) > 0 and len(adversary_team) > 0:
+        print(my_team)
+        my_pokemon = pick_your_pokemon(my_team)
+
+        starter = random.randint(1, 2)
+        if starter == 1:
+            print("You start")
+            fight_pokemons(my_pokemon, current_enemy)
+        else:
+            print("Enemy starts")
+            fight_pokemons(current_enemy, my_pokemon)
+        if my_pokemon["hp"] == 0 :
+            my_team.remove(my_pokemon)
+        else:
+            adversary_team.pop(0)
+            current_enemy = adversary_team[0]
+    return "You win!" if len(my_team) > 0  else "Enemy wins!"
+
+def battle(number_of_pokemons = 3):
+    if len(backpack) < number_of_pokemons:
+        return print(f"You must at least have {number_of_pokemons} pokemons to start a fight!")
+
+    my_team = []
+    adversary_team = []
+
+    print(f"First, you need to build a team of {number_of_pokemons} pokemons:")
+
+    for i in range(number_of_pokemons):
+        my_team.append(pick_your_pokemon(backpack))
+        adversary_team.append(random.choice(enemy_backpack))
+
+    heal_pokemons(adversary_team)
+    print("Let's start the fight!")
+
+    winner = team_battle(my_team,adversary_team)
+    print(winner)
+
+
 # Program
 user_input = ""
 
@@ -336,19 +374,18 @@ while user_input != "q":
         case "1":
             print("Opening your backpack")
             open_backpack()
-            back = input("Go back? ")
+            back = input("Go back? y/n")
             if back == "y":
                 continue
         case "2":
             print("Catch a Pokemon")
             hunt_pokemon()
             end_hunt = input("Go back (q) or try again (r)?")
-            while end_hunt != "q" or end_hunt == "r":
-                if end_hunt == "q":
-                    break
-                elif end_hunt == "r":
+            while end_hunt != "q":
+                if end_hunt == "r":
                     hunt_pokemon()
                     end_hunt = input("Go back (q) or try again (r)?")
+                #end_hunt = input("Go back (q) or try again (r)?")
         case "3":
             print("Fight!")
             battle()
@@ -359,5 +396,6 @@ while user_input != "q":
         case "5":
             print("Opening your Pokedex")
             open_pokedex()
-            back = input("Go back? ")
     clear_console()
+print("Thanks for these great adventures, see you later!")
+
